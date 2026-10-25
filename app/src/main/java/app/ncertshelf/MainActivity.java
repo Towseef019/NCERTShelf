@@ -45,11 +45,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         web = new WebView(this);
+        web.setBackgroundColor(0xFF0A0E1F);   // no white flash before the page paints
         setContentView(web);
 
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
-        s.setDomStorageEnabled(true);
+        s.setDomStorageEnabled(true);          // keeps your "read" ticks
         s.setAllowFileAccess(true);
         s.setBuiltInZoomControls(false);
 
@@ -77,13 +78,22 @@ public class MainActivity extends Activity {
         if (pdfCount() == 0) firstRun();
     }
 
+    /** JS-callable helpers used by the page. */
     private class Bridge {
         @JavascriptInterface
         public int count() { return pdfCount(); }
 
         @JavascriptInterface
+        public boolean has(String name) {
+            return name != null && name.matches("[A-Za-z0-9]+")
+                    && new File(pdfDir(), name.toLowerCase() + ".pdf").exists();
+        }
+
+        @JavascriptInterface
         public void importPdfs() { ui.post(MainActivity.this::pickFolder); }
     }
+
+    // ---------- first run: copy bundled PDFs, or ask the user to import ----------
 
     private void firstRun() {
         String[] bundled = null;
@@ -130,6 +140,7 @@ public class MainActivity extends Activity {
         }).start();
     }
 
+    /** Copies *.pdf files from the picked folder (and one sub-folder level, e.g. ncert/pdfs). */
     private int copyTree(DocumentFile dir, int depth, ProgressDialog pd) {
         int count = 0;
         DocumentFile[] files = dir.listFiles();
@@ -177,11 +188,13 @@ public class MainActivity extends Activity {
         }).start();
     }
 
+    // ---------- opening a chapter ----------
+
     private void openPdf(String name) {
-        if (!name.matches("[A-Za-z0-9]+")) return;
+        if (!name.matches("[A-Za-z0-9]+")) return;     // no path tricks
         File f = new File(pdfDir(), name.toLowerCase() + ".pdf");
         if (!f.exists()) {
-            Toast.makeText(this, name + ".pdf is not in the app yet. Use \"Import PDFs\" at the bottom of the page.",
+            Toast.makeText(this, name + ".pdf is not in the app yet. Open the home screen and tap Import.",
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -190,9 +203,9 @@ public class MainActivity extends Activity {
         view.setDataAndType(uri, "application/pdf");
         view.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
-            startActivity(view);
+            startActivity(view);                         // best: your PDF app, with zoom/search
         } catch (ActivityNotFoundException e) {
-            Intent in = new Intent(this, PdfActivity.class);
+            Intent in = new Intent(this, PdfActivity.class);   // fallback: built-in reader
             in.putExtra("path", f.getAbsolutePath());
             in.putExtra("title", name);
             startActivity(in);
