@@ -1,26 +1,24 @@
 # NCERT Shelf (Android)
 
-Class 11 and 12 NCERT Physics, Chemistry and Biology reader for Android. The app stores imported PDF books in private app storage so they can be opened offline.
+Class 11 & 12 NCERT Physics, Chemistry, Zoology and Botany, fully offline.
+The app is small; the books live inside the app's private storage after a one-time import.
 
 ## Build the APK
+**Android Studio:** File > Open > this folder > wait for sync > Build > Build APK(s).
+APK: `app/build/outputs/apk/debug/app-debug.apk`
 
-1. Open this repository in Android Studio.
-2. Let Gradle sync complete.
-3. Build with **Build > Build APK(s)**.
+**No PC (GitHub):** push this folder to a GitHub repo > Actions > "Build APK" > Run workflow >
+download the `NCERTShelf-debug-apk` artifact.
 
-The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`.
+## Get the books into the app (pick one)
+1. **Import on the phone (recommended):** install the APK, open it, tap *Choose folder* and pick the
+   folder holding the PDFs (your `ncert` or `ncert/pdfs` folder). They are copied once into the app.
+   Later: *Import PDFs* from the menu.
+2. **Bundle inside the APK:** put all PDFs into `app/src/main/assets/pdfs/` before building.
+   The app copies them to its storage on first launch. (APK will be ~330 MB.)
 
-You can also run the **Build APK** workflow under GitHub Actions. Download the `NCERTShelf-debug-apk` artifact from a successful workflow run.
+Missing from your Drive copy: `keph1ps.pdf` (Class 11 Physics Part I contents). Add it to either place.
 
-## Add NCERT PDFs
-
-Install the app, tap **Choose folder**, and select the folder containing the NCERT PDF files. The app copies PDFs into its private storage for offline use. Alternatively, place PDFs in `app/src/main/assets/pdfs/` before building to bundle them in the APK.
-
-The repository does not include NCERT textbook PDFs. Add only files you are permitted to use and distribute. NCERT books are copyrighted; do not publish an APK containing copyrighted PDFs without permission.
-
-## Project structure
-
-- `app/src/main/java/app/ncertshelf/` - Android activities
-- `app/src/main/assets/index.html` - chapter browser interface
-- `app/src/main/res/` - Android resources
-- `.github/workflows/build.yml` - automated APK build
+## Notes
+- Chapters open in your phone's PDF app (zoom/search). If none is installed, a built-in reader opens.
+- NCERT books are copyrighted. Keep this app for personal study; do not publish it with the PDFs inside.
