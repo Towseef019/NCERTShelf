@@ -10,8 +10,8 @@ android {
         applicationId "app.ncertshelf"
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "3.0"
     }
 
     buildTypes {
@@ -25,6 +25,8 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
+    // PDFs are already compressed; storing them as-is keeps the build fast
+    // if you choose to bundle them inside the APK (see README).
     androidResources {
         noCompress 'pdf'
     }
